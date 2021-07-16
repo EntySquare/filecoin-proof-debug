@@ -159,7 +159,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
     }
     let dt2 = chrono::Local::now().second();
     let delta = dt2 - dt;
-    print!("{}, {}, {}!", sector_id, " take seconds: ", delta);
+    print!("{}, {}!", " take seconds: ", delta);
 
 
     let pub_inputs = fallback::PublicInputs {
