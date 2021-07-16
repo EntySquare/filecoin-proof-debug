@@ -137,6 +137,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
     let mut pub_sectors = Vec::with_capacity(sector_count);
     let mut priv_sectors = Vec::with_capacity(sector_count);
 
+    print!("for loop start now");
     let dt = chrono::Local::now().second();
     for ((sector_id, replica), tree) in replicas.iter().zip(trees.iter()) {
 
@@ -159,7 +160,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
     }
     let dt2 = chrono::Local::now().second();
     let delta = dt2 - dt;
-    print!("{}, {}!", " take seconds: ", delta);
+    print!("{} {}!", "for loop take seconds: ", delta);
 
 
     let pub_inputs = fallback::PublicInputs {
