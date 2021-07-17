@@ -192,18 +192,30 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
      end :{:?},\n\
      duration:{:?}\n",start,end,end-start);
 
+    let  start = Local::now().timestamp();
     let pub_inputs = fallback::PublicInputs {
         randomness: randomness_safe,
         prover_id: prover_id_safe,
         sectors: pub_sectors,
         k: None,
     };
+    let end = Local::now().timestamp();
+    println!("[DEBUG] 6 pub_inputs done! \n\
+     start :: {:?},\n\
+     end :{:?},\n\
+     duration:{:?}\n",start,end,end-start);
 
+    let  start = Local::now().timestamp();
     let priv_inputs = fallback::PrivateInputs::<Tree> {
         sectors: &priv_sectors,
     };
+    let end = Local::now().timestamp();
+    println!("[DEBUG] 8 priv_inputs done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
 
+    let  start = Local::now().timestamp();
     let proof = FallbackPoStCompound::prove(&pub_params, &pub_inputs, &priv_inputs, &groth_params)?;
+    let end = Local::now().timestamp();
+    println!("[DEBUG] 9 proof done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
 
     info!("generate_window_post:finish");
     let end_api = Local::now().timestamp();
