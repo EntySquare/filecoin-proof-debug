@@ -138,7 +138,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
     let mut priv_sectors = Vec::with_capacity(sector_count);
 
 
-    let  dt:u32 = chrono::Local::now().second();
+    let  dt = Local::now().timestamp();
     println!("for dt is {}",dt);
     for ((sector_id, replica), tree) in replicas.iter().zip(trees.iter()) {
         println!("sector is {}",sector_id);
@@ -159,7 +159,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
         });
 
     }
-    let dt2:u32 = chrono::Local::now().second();
+    let dt2 = Local::now().timestamp();
     let delta = dt2 - dt;
     println!("for dt2 is {}",dt2);
     println!("for dt1 is {}",dt);
