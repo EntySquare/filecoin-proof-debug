@@ -136,19 +136,24 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
     let end = Local::now().timestamp();
     println!("[DEBUG] 2 let sector_count,setup_params,pub_params,groth_params ... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
     let start = Local::now().timestamp();
-    let trees: Vec<_> = replicas
-        .iter()
-        .map(|(sector_id, replica)| {
-            replica
-                .merkle_tree(post_config.sector_size)
-                .with_context(|| {
+    let trees: Vec<_> = replicas.iter().map(|(sector_id, replica)| {
+            replica.merkle_tree(post_config.sector_size).with_context(|| {
                     format!("generate_window_post: merkle_tree failed: {:?}", sector_id)
                 })
         })
         .collect::<Result<_>>()?;
     let end = Local::now().timestamp();
     println!("[DEBUG] 3 let trees: Vec<_> = replicas ... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
-
+    let start = Local::now().timestamp();
+    let trees1: Vec<_> = replicas.iter().map(|(sector_id, replica)| {
+        replica.merkle_tree(post_config.sector_size).with_context(|| {
+            format!("generate_window_post: merkle_tree failed: {:?}", sector_id)
+        })
+    })
+        .collect::<Result<_>>()?;
+    let end = Local::now().timestamp();
+    println!("[DEBUG] 31 let trees: Vec<_> = replicas ... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    println!("{}",trees1.len());
     let start = Local::now().timestamp();
     let mut pub_sectors = Vec::with_capacity(sector_count);
     let mut priv_sectors = Vec::with_capacity(sector_count);
@@ -200,10 +205,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
 
     info!("generate_window_post:finish");
     let end_api = Local::now().timestamp();
-    println!("[DEBUG] X generate_window_post() done! \n\
-     start :: {:?},\n\
-     end :{:?},\n\
-     duration:{:?}\n", start_api, end_api, end_api - start_api);
+    println!("[DEBUG] X generate_window_post() done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start_api, end_api, end_api - start_api);
     proof.to_vec()
 }
 
