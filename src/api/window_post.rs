@@ -138,7 +138,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
     let mut priv_sectors = Vec::with_capacity(sector_count);
 
 
-    let  start = Local::now().timestamp();
+    let  start = Local::now();
     for ((sector_id, replica), tree) in replicas.iter().zip(trees.iter()) {
         let comm_r = replica.safe_comm_r().with_context(|| {
             format!("generate_window_post: safe_comm_r failed: {:?}", sector_id)
@@ -157,7 +157,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
         });
 
     }
-    let end = Local::now().timestamp();
+    let end = Local::now();
     println!("for loop take seconds done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
     // eprintln!("3for loop take seconds {}!",delta);
 
