@@ -192,12 +192,12 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
         sectors: &priv_sectors,
     };
     let end = Local::now().timestamp();
-    println!("[DEBUG] 8 priv_inputs done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
+    println!("[DEBUG] 7 priv_inputs done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
 
     let  start = Local::now().timestamp();
     let proof = FallbackPoStCompound::prove(&pub_params, &pub_inputs, &priv_inputs, &groth_params)?;
     let end = Local::now().timestamp();
-    println!("[DEBUG] 9 proof done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
+    println!("[DEBUG] 8 proof done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
 
     info!("generate_window_post:finish");
     let end_api = Local::now().timestamp();
