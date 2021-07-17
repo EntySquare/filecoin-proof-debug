@@ -138,7 +138,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
     let mut priv_sectors = Vec::with_capacity(sector_count);
 
 
-    let  dt = chrono::Local::now().second();
+    let dt = chrono::Local::now().second();
     for ((sector_id, replica), tree) in replicas.iter().zip(trees.iter()) {
         println!("{} is {}","sector",sector_id);
         let comm_r = replica.safe_comm_r().with_context(|| {
