@@ -120,10 +120,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
     let partitions = get_partitions_for_window_post(replicas.len(), &post_config);
 
     let end = Local::now().timestamp();
-    println!("[DEBUG] 1 STRUCTURE randomness_safe,prover_id_safe,vanilla_params,partitions! \n\
-     start :: {:?},\n\
-     end :{:?},\n\
-     duration:{:?}\n",start,end,end-start);
+    println!("[DEBUG] 1 STRUCTURE randomness_safe,prover_id_safe,vanilla_params,partitions! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
 
     let  start = Local::now().timestamp();
     let sector_count = vanilla_params.sector_count;
@@ -137,10 +134,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
         FallbackPoStCompound::setup(&setup_params)?;
     let groth_params = get_post_params::<Tree>(&post_config)?;
     let end = Local::now().timestamp();
-    println!("[DEBUG] 2 let sector_count,setup_params,pub_params,groth_params ... done! \n\
-     start :: {:?},\n\
-     end :{:?},\n\
-     duration:{:?}\n",start,end,end-start);
+    println!("[DEBUG] 2 let sector_count,setup_params,pub_params,groth_params ... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
     let  start = Local::now().timestamp();
     let trees: Vec<_> = replicas
         .iter()
@@ -153,19 +147,13 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
         })
         .collect::<Result<_>>()?;
     let end = Local::now().timestamp();
-    println!("[DEBUG] 3 let trees: Vec<_> = replicas ... done! \n\
-     start :: {:?},\n\
-     end :{:?},\n\
-     duration:{:?}\n",start,end,end-start);
+    println!("[DEBUG] 3 let trees: Vec<_> = replicas ... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
 
     let  start = Local::now().timestamp();
     let mut pub_sectors = Vec::with_capacity(sector_count);
     let mut priv_sectors = Vec::with_capacity(sector_count);
     let end = Local::now().timestamp();
-    println!("[DEBUG] 4 Vec::with_capacity(sector_count & sector_count) done! \n\
-     start :: {:?},\n\
-     end :{:?},\n\
-     duration:{:?}\n",start,end,end-start);
+    println!("[DEBUG] 4 Vec::with_capacity(sector_count & sector_count) done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
 
     let  start = Local::now().timestamp();
     for ((sector_id, replica), tree) in replicas.iter().zip(trees.iter()) {
@@ -187,10 +175,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
 
     }
     let end = Local::now().timestamp();
-    println!("[DEBUG] 5 for <sector_id> <replica> <tree> done! \n\
-     start :: {:?},\n\
-     end :{:?},\n\
-     duration:{:?}\n",start,end,end-start);
+    println!("[DEBUG] 5 for <sector_id> <replica> <tree> done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
 
     let  start = Local::now().timestamp();
     let pub_inputs = fallback::PublicInputs {
@@ -200,10 +185,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
         k: None,
     };
     let end = Local::now().timestamp();
-    println!("[DEBUG] 6 pub_inputs done! \n\
-     start :: {:?},\n\
-     end :{:?},\n\
-     duration:{:?}\n",start,end,end-start);
+    println!("[DEBUG] 6 pub_inputs done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
 
     let  start = Local::now().timestamp();
     let priv_inputs = fallback::PrivateInputs::<Tree> {
@@ -248,10 +230,7 @@ pub fn verify_window_post<Tree: 'static + MerkleTreeTrait>(
     let partitions = get_partitions_for_window_post(replicas.len(), &post_config);
 
     let end = Local::now().timestamp();
-    println!("[DEBUG] verify_window_post() randomness_safe,prover_id_safe,vanilla_params,partitions done! \n\
-     start :: {:?},\n\
-     end :{:?},\n\
-     duration:{:?}\n",start,end,end-start);
+    println!("[DEBUG] verify_window_post() randomness_safe,prover_id_safe,vanilla_params,partitions done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
     let setup_params = compound_proof::SetupParams {
         vanilla_params,
         partitions,
@@ -261,10 +240,7 @@ pub fn verify_window_post<Tree: 'static + MerkleTreeTrait>(
     let pub_params: compound_proof::PublicParams<'_, FallbackPoSt<'_, Tree>> =
         FallbackPoStCompound::setup(&setup_params)?;
     let end = Local::now().timestamp();
-    println!("[DEBUG] setup(&setup_params)?; done! \n\
-     start :: {:?},\n\
-     end :{:?},\n\
-     duration:{:?}\n",start,end,end-start);
+    println!("[DEBUG] setup(&setup_params)?; done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
     let pub_sectors: Vec<_> = replicas
         .iter()
         .map(|(sector_id, replica)| {
@@ -299,10 +275,7 @@ pub fn verify_window_post<Tree: 'static + MerkleTreeTrait>(
         )?
     };
     let end = Local::now().timestamp();
-    println!("[DEBUG] let is_valid = ... ; done! \n\
-     start :: {:?},\n\
-     end :{:?},\n\
-     duration:{:?}\n",start,end,end-start);
+    println!("[DEBUG] let is_valid = ... ; done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n",start,end,end-start);
     if !is_valid {
         return Ok(false);
     }
