@@ -32,7 +32,7 @@ pub fn generate_window_post_with_vanilla<Tree: 'static + MerkleTreeTrait>(
     prover_id: ProverId,
     vanilla_proofs: Vec<FallbackPoStSectorProof<Tree>>,
 ) -> Result<SnarkProof> {
-    let  start = Local::now().timestamp();
+    let  start_api = Local::now().timestamp();
     info!("generate_window_post_with_vanilla:start");
     ensure!(
         post_config.typ == PoStType::Window,
@@ -90,11 +90,11 @@ pub fn generate_window_post_with_vanilla<Tree: 'static + MerkleTreeTrait>(
     )?;
 
     info!("generate_window_post_with_vanilla:finish");
-    let end = Local::now().timestamp();
+    let end_api = Local::now().timestamp();
     println!("[DEBUG] generate_window_post_with_vanilla() done! \n\
      start :: {:?},\n\
      end :{:?},\n\
-     duration:{:?}\n",start,end,end-start);
+     duration:{:?}\n",start_api,end_api,end_api-start_api);
     proof.to_vec()
 }
 
@@ -227,9 +227,14 @@ pub fn verify_window_post<Tree: 'static + MerkleTreeTrait>(
         partitions,
         priority: false,
     };
+    let  start = Local::now().timestamp();
     let pub_params: compound_proof::PublicParams<'_, FallbackPoSt<'_, Tree>> =
         FallbackPoStCompound::setup(&setup_params)?;
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] setup(&setup_params)?; done! \n\
+     start :: {:?},\n\
+     end :{:?},\n\
+     duration:{:?}\n",start,end,end-start);
     let pub_sectors: Vec<_> = replicas
         .iter()
         .map(|(sector_id, replica)| {
@@ -249,7 +254,7 @@ pub fn verify_window_post<Tree: 'static + MerkleTreeTrait>(
         sectors: pub_sectors,
         k: None,
     };
-
+    let  start = Local::now().timestamp();
     let is_valid = {
         let verifying_key = get_post_verifying_key::<Tree>(&post_config)?;
         let multi_proof = MultiProof::new_from_reader(partitions, proof, &verifying_key)?;
@@ -263,6 +268,11 @@ pub fn verify_window_post<Tree: 'static + MerkleTreeTrait>(
             },
         )?
     };
+    let end = Local::now().timestamp();
+    println!("[DEBUG] let is_valid = ... ; done! \n\
+     start :: {:?},\n\
+     end :{:?},\n\
+     duration:{:?}\n",start,end,end-start);
     if !is_valid {
         return Ok(false);
     }
