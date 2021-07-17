@@ -119,7 +119,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
     let partitions = get_partitions_for_window_post(replicas.len(), &post_config);
 
     let end = Local::now().timestamp();
-    println!("[DEBUG] STRUCTURE randomness_safe,prover_id_safe,vanilla_params,partitions! \n\
+    println!("[DEBUG] 1 STRUCTURE randomness_safe,prover_id_safe,vanilla_params,partitions! \n\
      start :: {:?},\n\
      end :{:?},\n\
      duration:{:?}\n",start,end,end-start);
@@ -136,7 +136,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
         FallbackPoStCompound::setup(&setup_params)?;
     let groth_params = get_post_params::<Tree>(&post_config)?;
     let end = Local::now().timestamp();
-    println!("[DEBUG] let sector_count,setup_params,pub_params,groth_params ... done! \n\
+    println!("[DEBUG] 2 let sector_count,setup_params,pub_params,groth_params ... done! \n\
      start :: {:?},\n\
      end :{:?},\n\
      duration:{:?}\n",start,end,end-start);
@@ -152,7 +152,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
         })
         .collect::<Result<_>>()?;
     let end = Local::now().timestamp();
-    println!("[DEBUG] let trees: Vec<_> = replicas ... done! \n\
+    println!("[DEBUG] 3 let trees: Vec<_> = replicas ... done! \n\
      start :: {:?},\n\
      end :{:?},\n\
      duration:{:?}\n",start,end,end-start);
@@ -161,7 +161,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
     let mut pub_sectors = Vec::with_capacity(sector_count);
     let mut priv_sectors = Vec::with_capacity(sector_count);
     let end = Local::now().timestamp();
-    println!("[DEBUG] Vec::with_capacity(sector_count & sector_count) done! \n\
+    println!("[DEBUG] 4 Vec::with_capacity(sector_count & sector_count) done! \n\
      start :: {:?},\n\
      end :{:?},\n\
      duration:{:?}\n",start,end,end-start);
@@ -186,7 +186,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
 
     }
     let end = Local::now().timestamp();
-    println!("[DEBUG] for <sector_id> <replica> <tree> done! \n\
+    println!("[DEBUG] 5 for <sector_id> <replica> <tree> done! \n\
      start :: {:?},\n\
      end :{:?},\n\
      duration:{:?}\n",start,end,end-start);
