@@ -124,6 +124,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
      end :{:?},\n\
      duration:{:?}\n",start,end,end-start);
 
+    let  start = Local::now().timestamp();
     let sector_count = vanilla_params.sector_count;
     let setup_params = compound_proof::SetupParams {
         vanilla_params,
@@ -134,7 +135,12 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
     let pub_params: compound_proof::PublicParams<'_, FallbackPoSt<'_, Tree>> =
         FallbackPoStCompound::setup(&setup_params)?;
     let groth_params = get_post_params::<Tree>(&post_config)?;
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] let sector_count,setup_params,pub_params,groth_params ... done! \n\
+     start :: {:?},\n\
+     end :{:?},\n\
+     duration:{:?}\n",start,end,end-start);
+    let  start = Local::now().timestamp();
     let trees: Vec<_> = replicas
         .iter()
         .map(|(sector_id, replica)| {
@@ -145,6 +151,12 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
                 })
         })
         .collect::<Result<_>>()?;
+    let end = Local::now().timestamp();
+    println!("[DEBUG] let trees: Vec<_> = replicas ... done! \n\
+     start :: {:?},\n\
+     end :{:?},\n\
+     duration:{:?}\n",start,end,end-start);
+
     let  start = Local::now().timestamp();
     let mut pub_sectors = Vec::with_capacity(sector_count);
     let mut priv_sectors = Vec::with_capacity(sector_count);
@@ -174,7 +186,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
 
     }
     let end = Local::now().timestamp();
-    println!("[DEBUG]for loop take seconds done! \n\
+    println!("[DEBUG] for <sector_id> <replica> <tree> done! \n\
      start :: {:?},\n\
      end :{:?},\n\
      duration:{:?}\n",start,end,end-start);
