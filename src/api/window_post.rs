@@ -106,6 +106,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
     prover_id: ProverId,
 ) -> Result<SnarkProof> {
     println!("generate_window_post run ....");
+    let  start_api = Local::now().timestamp();
     info!("generate_window_post:start");
     ensure!(
         post_config.typ == PoStType::Window,
@@ -205,7 +206,11 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
     let proof = FallbackPoStCompound::prove(&pub_params, &pub_inputs, &priv_inputs, &groth_params)?;
 
     info!("generate_window_post:finish");
-
+    let end_api = Local::now().timestamp();
+    println!("[DEBUG] generate_window_post() done! \n\
+     start :: {:?},\n\
+     end :{:?},\n\
+     duration:{:?}\n",start_api,end_api,end_api-start_api);
     proof.to_vec()
 }
 
