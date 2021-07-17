@@ -138,9 +138,10 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
     let mut priv_sectors = Vec::with_capacity(sector_count);
 
 
-    let dt = chrono::Local::now().second();
+    let  dt:u32 = chrono::Local::now().second();
+    println!("for dt is {}",dt);
     for ((sector_id, replica), tree) in replicas.iter().zip(trees.iter()) {
-        println!("{} is {}","sector",sector_id);
+        println!("sector is {}",sector_id);
         let comm_r = replica.safe_comm_r().with_context(|| {
             format!("generate_window_post: safe_comm_r failed: {:?}", sector_id)
         })?;
@@ -158,9 +159,10 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
         });
 
     }
-    let dt2 = chrono::Local::now().second();
+    let dt2:u32 = chrono::Local::now().second();
     let delta = dt2 - dt;
-    print!("{} {}!", "for loop take seconds: ", delta);
+    println!("for dt2 is {}",dt2);
+    print!("for loop take seconds: {}!", delta);
 
 
     let pub_inputs = fallback::PublicInputs {
