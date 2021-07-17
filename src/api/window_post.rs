@@ -162,8 +162,10 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
     let dt2:u32 = chrono::Local::now().second();
     let delta = dt2 - dt;
     println!("for dt2 is {}",dt2);
-    print!("for loop take seconds: {}!", delta);
-
+    println!("for dt1 is {}",dt);
+    println!("1for loop take seconds {}!",delta);
+    format!("2for loop take seconds {}! \n",delta);
+    eprintln!("3for loop take seconds {}!",delta);
 
     let pub_inputs = fallback::PublicInputs {
         randomness: randomness_safe,
