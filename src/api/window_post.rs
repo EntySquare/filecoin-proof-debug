@@ -207,7 +207,7 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
 
     info!("generate_window_post:finish");
     let end_api = Local::now().timestamp();
-    println!("[DEBUG] generate_window_post() done! \n\
+    println!("[DEBUG] X generate_window_post() done! \n\
      start :: {:?},\n\
      end :{:?},\n\
      duration:{:?}\n",start_api,end_api,end_api-start_api);
