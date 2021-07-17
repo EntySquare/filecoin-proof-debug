@@ -133,16 +133,16 @@ pub fn generate_window_post<Tree: 'static + MerkleTreeTrait>(
                 })
         })
         .collect::<Result<_>>()?;
-    let  dt1 = Local::now().timestamp();
+    let dt1 = Local::now().timestamp();
     let mut pub_sectors = Vec::with_capacity(sector_count);
     let mut priv_sectors = Vec::with_capacity(sector_count);
     let dt2 = Local::now().timestamp();
-    format!("[DEBUG]Vec::with_capacity pub_sectors priv_sectors ... time {}: \n",dt2 - dt1);
+    format!("[DEBUG] RUN 2 Vec::with_capacity() ... time {}: \n",(dt2 - dt1));
 
     let  dt1 = Local::now().timestamp();
-    println!("[DEBUG]for <sector_id> <replica> <tree> ... display[sector_id]: - - - - - - - - -");
+    format!("[DEBUG]for <sector_id> <replica> <tree> ... display[sector_id]: - - - - - - - - - \n");
     for ((sector_id, replica), tree) in replicas.iter().zip(trees.iter()) {
-        print!("[{}]",sector_id);
+        format!("[{}]",sector_id);
         let comm_r = replica.safe_comm_r().with_context(|| {
             format!("generate_window_post: safe_comm_r failed: {:?}", sector_id)
         })?;
