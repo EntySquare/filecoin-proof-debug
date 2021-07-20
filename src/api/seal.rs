@@ -1,6 +1,7 @@
 use std::fs::{self, metadata, File, OpenOptions};
 use std::io::Write;
 use std::path::{Path, PathBuf};
+use chrono::*;
 
 use anyhow::{ensure, Context, Result};
 use bellperson::bls::{Bls12, Fr};
@@ -333,6 +334,8 @@ pub fn seal_commit_phase1<T: AsRef<Path>, Tree: 'static + MerkleTreeTrait>(
     pre_commit: SealPreCommitOutput,
     piece_infos: &[PieceInfo],
 ) -> Result<SealCommitPhase1Output<Tree>> {
+    let start_api = Local::now().timestamp();
+    let start = Local::now().timestamp();
     info!("seal_commit_phase1:start: {:?}", sector_id);
 
     // Sanity check all input path types.
@@ -353,7 +356,9 @@ pub fn seal_commit_phase1<T: AsRef<Path>, Tree: 'static + MerkleTreeTrait>(
         verify_pieces(&comm_d, piece_infos, porep_config.into())?,
         "pieces and comm_d do not match"
     );
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C1-1 ensure!()... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
     let p_aux = {
         let p_aux_path = cache_path.as_ref().join(CacheKey::PAux.to_string());
         let p_aux_bytes = fs::read(&p_aux_path)
@@ -361,7 +366,9 @@ pub fn seal_commit_phase1<T: AsRef<Path>, Tree: 'static + MerkleTreeTrait>(
 
         deserialize(&p_aux_bytes)
     }?;
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C1-2 p_aux,p_aux_path,p_aux_bytes ... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
     let t_aux = {
         let t_aux_path = cache_path.as_ref().join(CacheKey::TAux.to_string());
         let t_aux_bytes = fs::read(&t_aux_path)
@@ -373,7 +380,9 @@ pub fn seal_commit_phase1<T: AsRef<Path>, Tree: 'static + MerkleTreeTrait>(
         res.set_cache_path(cache_path);
         res
     };
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C1-3 t_aux,t_aux_path,t_aux_bytes ... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
     // Convert TemporaryAux to TemporaryAuxCache, which instantiates all
     // elements based on the configs stored in TemporaryAux.
     let t_aux_cache: TemporaryAuxCache<Tree, DefaultPieceHasher> =
@@ -390,7 +399,9 @@ pub fn seal_commit_phase1<T: AsRef<Path>, Tree: 'static + MerkleTreeTrait>(
         comm_d_safe,
         &porep_config.porep_id,
     );
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C1-4 t_aux_cache,comm_r_safe,comm_d_safe,replica_id ... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
     let public_inputs = stacked::PublicInputs {
         replica_id,
         tau: Some(stacked::Tau {
@@ -405,7 +416,9 @@ pub fn seal_commit_phase1<T: AsRef<Path>, Tree: 'static + MerkleTreeTrait>(
         p_aux,
         t_aux: t_aux_cache,
     };
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C1-5 public_inputs,private_inputs ... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
     let compound_setup_params = compound_proof::SetupParams {
         vanilla_params: setup_params(
             PaddedBytesAmount::from(porep_config),
@@ -416,26 +429,31 @@ pub fn seal_commit_phase1<T: AsRef<Path>, Tree: 'static + MerkleTreeTrait>(
         partitions: Some(usize::from(PoRepProofPartitions::from(porep_config))),
         priority: false,
     };
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C1-6 compound_setup_params,vanilla_params,partitions,priority ... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
     let compound_public_params = <StackedCompound<Tree, DefaultPieceHasher> as CompoundProof<
         StackedDrg<'_, Tree, DefaultPieceHasher>,
         _,
     >>::setup(&compound_setup_params)?;
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C1-7 compound_public_params ... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
     let vanilla_proofs = StackedDrg::prove_all_partitions(
         &compound_public_params.vanilla_params,
         &public_inputs,
         &private_inputs,
         StackedCompound::partition_count(&compound_public_params),
     )?;
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C1-8 vanilla_proofs ... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
     let sanity_check = StackedDrg::<Tree, DefaultPieceHasher>::verify_all_partitions(
         &compound_public_params.vanilla_params,
         &public_inputs,
         &vanilla_proofs,
     )?;
     ensure!(sanity_check, "Invalid vanilla proof generated");
-
     let out = SealCommitPhase1Output {
         vanilla_proofs,
         comm_r,
@@ -444,8 +462,12 @@ pub fn seal_commit_phase1<T: AsRef<Path>, Tree: 'static + MerkleTreeTrait>(
         seed,
         ticket,
     };
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C1-9 sanity_check,out ... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
     info!("seal_commit_phase1:finish: {:?}", sector_id);
+
+    let end_api = Local::now().timestamp();
+    println!("[DEBUG] C1-X seal_commit_phase1() done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start_api, end_api, end_api - start_api);
     Ok(out)
 }
 
@@ -456,6 +478,8 @@ pub fn seal_commit_phase2<Tree: 'static + MerkleTreeTrait>(
     prover_id: ProverId,
     sector_id: SectorId,
 ) -> Result<SealCommitOutput> {
+    let start_api = Local::now().timestamp();
+    let start = Local::now().timestamp();
     info!("seal_commit_phase2:start: {:?}", sector_id);
 
     let SealCommitPhase1Output {
@@ -484,7 +508,9 @@ pub fn seal_commit_phase2<Tree: 'static + MerkleTreeTrait>(
     };
 
     let groth_params = get_stacked_params::<Tree>(porep_config)?;
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C2-1 SealCommitPhase1Output,comm_d,comm_r,comm_r_safe,comm_d_safe,public_inputs,groth_params  \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
     info!(
         "got groth params ({}) while sealing",
         u64::from(PaddedBytesAmount::from(porep_config))
@@ -500,7 +526,9 @@ pub fn seal_commit_phase2<Tree: 'static + MerkleTreeTrait>(
         partitions: Some(usize::from(PoRepProofPartitions::from(porep_config))),
         priority: false,
     };
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C2-2 compound_setup_params,vanilla_params,partitions,priority  \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
     let compound_public_params = <StackedCompound<Tree, DefaultPieceHasher> as CompoundProof<
         StackedDrg<'_, Tree, DefaultPieceHasher>,
         _,
@@ -515,7 +543,9 @@ pub fn seal_commit_phase2<Tree: 'static + MerkleTreeTrait>(
         compound_public_params.priority,
     )?;
     info!("snark_proof:finish");
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C2-3 compound_public_params,groth_proofs  \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
     let proof = MultiProof::new(groth_proofs, &groth_params.pvk);
 
     let mut buf = Vec::with_capacity(
@@ -523,7 +553,9 @@ pub fn seal_commit_phase2<Tree: 'static + MerkleTreeTrait>(
     );
 
     proof.write(&mut buf)?;
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C2-4 write(&mut buf)  \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
     // Verification is cheap when parameters are cached,
     // and it is never correct to return a proof which does not verify.
     verify_seal::<Tree>(
@@ -539,6 +571,10 @@ pub fn seal_commit_phase2<Tree: 'static + MerkleTreeTrait>(
     .context("post-seal verification sanity check failed")?;
 
     let out = SealCommitOutput { proof: buf };
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C2-5 verify_seal,out  \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let end_api = Local::now().timestamp();
+    println!("[DEBUG] C2-X seal_commit_phase2 done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start_api, end_api, end_api - start_api);
 
     info!("seal_commit_phase2:finish: {:?}", sector_id);
     Ok(out)
