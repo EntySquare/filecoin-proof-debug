@@ -526,13 +526,14 @@ pub fn seal_commit_phase2<Tree: 'static + MerkleTreeTrait>(
         partitions: Some(usize::from(PoRepProofPartitions::from(porep_config))),
         priority: false,
     };
-    let end = Local::now().timestamp();
-    println!("[DEBUG] C2-2 compound_setup_params,vanilla_params,partitions,priority  \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
-    let start = Local::now().timestamp();
     let compound_public_params = <StackedCompound<Tree, DefaultPieceHasher> as CompoundProof<
         StackedDrg<'_, Tree, DefaultPieceHasher>,
         _,
     >>::setup(&compound_setup_params)?;
+
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C2-2 compound_setup_params,vanilla_params,partitions,priority  \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
 
     info!("snark_proof:start");
     let groth_proofs = StackedCompound::<Tree, DefaultPieceHasher>::circuit_proofs(
