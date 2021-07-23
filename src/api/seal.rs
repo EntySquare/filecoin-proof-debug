@@ -543,6 +543,9 @@ pub fn seal_commit_phase2<Tree: 'static + MerkleTreeTrait>(
         &groth_params,
         compound_public_params.priority,
     )?;
+    let end = Local::now().timestamp();
+    println!("[DEBUG] C2-2 snark_proof... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
     info!("snark_proof:finish");
     let end = Local::now().timestamp();
     println!("[DEBUG] C2-3 compound_public_params,groth_proofs  \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
