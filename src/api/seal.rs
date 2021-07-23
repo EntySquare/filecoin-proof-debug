@@ -66,6 +66,8 @@ where
     S: AsRef<Path>,
     T: AsRef<Path>,
 {
+    let start_api = Local::now().timestamp();
+    let start = Local::now().timestamp();
     info!("seal_pre_commit_phase1:start: {:?}", sector_id);
 
     // Sanity check all input path types.
@@ -81,6 +83,10 @@ where
         metadata(cache_path.as_ref())?.is_dir(),
         "cache_path must be a directory"
     );
+
+    let end = Local::now().timestamp();
+    println!("[DEBUG] p1-1 ensure!()... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
 
     let sector_bytes = usize::from(PaddedBytesAmount::from(porep_config));
     fs::metadata(&in_path)
@@ -113,6 +119,10 @@ where
             .with_context(|| format!("could not mmap out_path={:?}", out_path.as_ref().display()))?
     };
 
+    let end = Local::now().timestamp();
+    println!("[DEBUG] p1-2 r!()... readPath()! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
+
     let compound_setup_params = compound_proof::SetupParams {
         vanilla_params: setup_params(
             PaddedBytesAmount::from(porep_config),
@@ -128,6 +138,10 @@ where
         StackedDrg<'_, Tree, DefaultPieceHasher>,
         _,
     >>::setup(&compound_setup_params)?;
+
+    let end = Local::now().timestamp();
+    println!("[DEBUG] p1-3 r!()... setupParams()! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
 
     info!("building merkle tree for the original data");
     let (config, comm_d) = measure_op(Operation::CommD, || -> Result<_> {
@@ -167,6 +181,10 @@ where
         Ok((config, comm_d))
     })?;
 
+    let end = Local::now().timestamp();
+    println!("[DEBUG] p1-4 r!()... merkletrees()! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
+
     info!("verifying pieces");
 
     ensure!(
@@ -193,8 +211,13 @@ where
         config,
         comm_d,
     };
+    let end = Local::now().timestamp();
+    println!("[DEBUG] p1-5 verify!()... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
 
     info!("seal_pre_commit_phase1:finish: {:?}", sector_id);
+    let end_api = Local::now().timestamp();
+    println!("[DEBUG] p1-X seal_commit_phase1() done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start_api, end_api, end_api - start_api);
     Ok(out)
 }
 
@@ -209,6 +232,8 @@ where
     R: AsRef<Path>,
     S: AsRef<Path>,
 {
+    let start_api = Local::now().timestamp();
+    let start = Local::now().timestamp();
     info!("seal_pre_commit_phase2:start");
 
     // Sanity check all input path types.
@@ -220,7 +245,9 @@ where
         metadata(replica_path.as_ref())?.is_file(),
         "replica_path must be a file"
     );
-
+    let end = Local::now().timestamp();
+    println!("[DEBUG] p2-1 ensure!()... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
     let SealPreCommitPhase1Output {
         mut labels,
         mut config,
@@ -230,7 +257,6 @@ where
 
     labels.update_root(cache_path.as_ref());
     config.path = cache_path.as_ref().into();
-
     let f_data = OpenOptions::new()
         .read(true)
         .write(true)
@@ -251,6 +277,10 @@ where
     };
     let data: Data<'_> = (data, PathBuf::from(replica_path.as_ref())).into();
 
+    let end = Local::now().timestamp();
+    println!("[DEBUG] p2-2 readPath!()... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
+
     // Load data tree from disk
     let data_tree = {
         let base_tree_size = get_base_tree_size::<DefaultBinaryTree>(porep_config.sector_size)?;
@@ -266,11 +296,14 @@ where
             config.rows_to_discard == default_rows_to_discard(base_tree_leafs, BINARY_ARITY),
             "Invalid cache size specified"
         );
-
         let store: DiskStore<DefaultPieceDomain> =
             DiskStore::new_from_disk(base_tree_size, BINARY_ARITY, &config)?;
         BinaryMerkleTree::<DefaultPieceHasher>::from_data_store(store, base_tree_leafs)?
     };
+
+    let end = Local::now().timestamp();
+    println!("[DEBUG] p2-3 basetree!()... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
 
     let compound_setup_params = compound_proof::SetupParams {
         vanilla_params: setup_params(
@@ -287,6 +320,10 @@ where
         StackedDrg<'_, Tree, DefaultPieceHasher>,
         _,
     >>::setup(&compound_setup_params)?;
+
+    let end = Local::now().timestamp();
+    println!("[DEBUG] p2-4 setupparams!()... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
 
     let (tau, (p_aux, t_aux)) = StackedDrg::<Tree, DefaultPieceHasher>::replicate_phase2(
         &compound_public_params.vanilla_params,
@@ -318,7 +355,13 @@ where
 
     let out = SealPreCommitOutput { comm_r, comm_d };
 
+    let end = Local::now().timestamp();
+    println!("[DEBUG] p2-5 preCommit2!()... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
+    let start = Local::now().timestamp();
+
     info!("seal_pre_commit_phase2:finish");
+    let end_api = Local::now().timestamp();
+    println!("[DEBUG] p2-X seal_commit_phase1() done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start_api, end_api, end_api - start_api);
     Ok(out)
 }
 
