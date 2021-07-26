@@ -213,7 +213,6 @@ where
     };
     let end = Local::now().timestamp();
     println!("[DEBUG] p1-5 verify!()... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
-    let start = Local::now().timestamp();
 
     info!("seal_pre_commit_phase1:finish: {:?}", sector_id);
     let end_api = Local::now().timestamp();
@@ -357,7 +356,6 @@ where
 
     let end = Local::now().timestamp();
     println!("[DEBUG] p2-5 preCommit2!()... done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start, end, end - start);
-    let start = Local::now().timestamp();
 
     info!("seal_pre_commit_phase2:finish");
     let end_api = Local::now().timestamp();
