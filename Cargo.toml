@@ -27,7 +27,7 @@ harness = false
 version = "1.0.23"
 
 [dependencies.bellperson]
-version = "0.14.0"
+version = "0.14.1"
 default-features = false
 
 [dependencies.bincode]
