@@ -152,3 +152,5 @@ gpu = ["storage-proofs-core/gpu", "storage-proofs-porep/gpu", "storage-proofs-po
 heap-profile = ["gperftools/heap"]
 pairing = ["storage-proofs-core/pairing", "storage-proofs-porep/pairing", "storage-proofs-post/pairing", "bellperson/pairing", "filecoin-hashers/pairing", "fr32/pairing"]
 simd = ["storage-proofs-core/simd"]
+[patch.crates-io]
+bellperson = { path = "../entysnark"}
