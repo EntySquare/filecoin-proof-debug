@@ -75,7 +75,7 @@ optional = true
 version = "0.4.1"
 
 [dependencies.hex]
-version = "0.4.0"
+version = "0.4.3"
 
 [dependencies.itertools]
 version = "0.9"
@@ -152,5 +152,3 @@ gpu = ["storage-proofs-core/gpu", "storage-proofs-porep/gpu", "storage-proofs-po
 heap-profile = ["gperftools/heap"]
 pairing = ["storage-proofs-core/pairing", "storage-proofs-porep/pairing", "storage-proofs-post/pairing", "bellperson/pairing", "filecoin-hashers/pairing", "fr32/pairing"]
 simd = ["storage-proofs-core/simd"]
-[patch.crates-io]
-bellperson = { path = "../entysnark"}
