@@ -523,8 +523,9 @@ pub fn seal_commit_phase2<Tree: 'static + MerkleTreeTrait>(
 ) -> Result<SealCommitOutput> {
     let start_api = Local::now().timestamp();
     let start = Local::now().timestamp();
-    println!("C2 — prover_id: {:?}", &prover_id);
-    println!("C2 — sector_id:: {:?}", &sector_id);
+    println!("C2 — prover_id -- sector_id ...");
+    println!("C2 — prover_id: {:?}", prover_id);
+    println!("C2 — sector_id:: {:?}", sector_id);
 
     let SealCommitPhase1Output {
         vanilla_proofs,
