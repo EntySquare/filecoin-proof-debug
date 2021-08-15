@@ -26,6 +26,8 @@ use storage_proofs_core::{
     util::default_rows_to_discard,
     Data,
 };
+use rustc_serialize::hex::ToHex;
+
 use storage_proofs_porep::stacked::{
     self, generate_replica_id, ChallengeRequirements, StackedCompound, StackedDrg, Tau,
     TemporaryAux, TemporaryAuxCache,
@@ -623,7 +625,6 @@ pub fn seal_commit_phase2<Tree: 'static + MerkleTreeTrait>(
     println!("[DEBUG] C2-X seal_commit_phase2 done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start_api, end_api, end_api - start_api);
 
     info!("seal_commit_phase2:finish: {:?}", sector_id);
-    use rustc_serialize::hex::ToHex;
     println!("[DEBUG] proof:{:?}",&out.proof.to_vec().to_hex());
     Ok(out)
 }
