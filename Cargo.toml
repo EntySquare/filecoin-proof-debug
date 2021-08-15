@@ -26,6 +26,9 @@ harness = false
 [dependencies.anyhow]
 version = "1.0.23"
 
+[dependencies.serialize]
+version = "0.3.24"
+#test
 [dependencies.bellperson]
 version = "0.14.1"
 default-features = false
