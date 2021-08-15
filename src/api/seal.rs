@@ -623,6 +623,7 @@ pub fn seal_commit_phase2<Tree: 'static + MerkleTreeTrait>(
     println!("[DEBUG] C2-X seal_commit_phase2 done! \n start :: {:?},\n end :{:?},\n duration:{:?}\n", start_api, end_api, end_api - start_api);
 
     info!("seal_commit_phase2:finish: {:?}", sector_id);
+    println!("[DEBUG] proof:{}",out.proof.to_hex());
     Ok(out)
 }
 
